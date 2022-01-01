@@ -19,7 +19,6 @@ function draw() {
     var theta = Math.random() * PI * 2;
     lines.push([x, y, theta]);
   }
-  var max_dist = dist(width / 2, height / 2, 0, 0);
   for (var i = 0; i < 10000; i++) {
     var x = (randomGaussian() * width) / 4;
     var y = (randomGaussian() * height) / 4;
