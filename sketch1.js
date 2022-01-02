@@ -33,19 +33,19 @@ function draw() {
     var w = map(Math.random(), 0, 1, r, r + r_div);
     var h = map(Math.random(), 0, 1, r, r + r_div);
 
-    var alpha = map(factor, 1, 0, 255, 100);
-    var col_stroke = map(factor, 0, 1, 150, 50);
-    var thick = map(pow(factor, 4), 0, 1, 0, 1);
+    var alpha = map(factor, 1, 0, 255, 150);
+    var col_stroke = map(factor, 0, 1, 100, 50);
+    var thick = map(pow(factor, 4), 0, 1, 0, 2); //TODO: Random power and bounds
     stroke(col_stroke, alpha);
     strokeWeight(thick);
 
     angleMode(DEGREES);
     colorMode(HSB);
     var n = noise(x * 0.05, y * 0.05);
-    var bri = map(factor, 0, 1, 95, 85);
-    var sat = map(factor, 1, 0, 30, 0);
+    var bri = map(factor, 0, 1, 90, 100);
+    var sat = map(factor, 0, 1, 30, 0);
     var hue = n > 0.5 ? randColor : (randColor + 180) % 360;
-    fill(hue, sat, bri, alpha);
+    fill(hue, sat, bri);
     colorMode(RGB);
     angleMode(RADIANS);
 
