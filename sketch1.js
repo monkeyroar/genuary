@@ -35,7 +35,7 @@ function draw() {
 
     var alpha = map(factor, 1, 0, 255, 150);
     var col_stroke = map(factor, 0, 1, 100, 50);
-    var thick = map(pow(factor, 4), 0, 1, 0, 2); //TODO: Random power and bounds
+    var thick = map(pow(factor, 2), 0, 1, 0, 2);
     stroke(col_stroke, alpha);
     strokeWeight(thick);
 
