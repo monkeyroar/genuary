@@ -43,8 +43,8 @@ function pixelAt(x, y, newColor) {
   }
 }
 
-let r = [118, 192, 102].map((v) => v / 255);
-let b = [173, 43, 187].map((v) => v / 255);
+let r = [226, 0, 35].map((v) => v / 255);
+let b = [255, 238, 44].map((v) => v / 255);
 
 function quantize(color) {
   let r_dist =
@@ -88,9 +88,58 @@ function matrixErrorDiffusion(color, x, y) {
   return quantized;
 }
 
+function sortRow(pixelColors, y) {
+  let brightThresh = y < height / 3 ? 40 : 20;
+  let x = 0;
+  let xEnd = 0;
+  while (xEnd < width - 1) {
+    x = pixelColors.findIndex((e, i) => i > x && brightness(e) > brightThresh);
+    xEnd = pixelColors.findIndex(
+      (e, i) => i > x && brightness(e) < brightThresh
+    );
+    if (x < 0 || xEnd < 0) break;
+
+    let sortLength = xEnd - x;
+    let unsorted = [];
+
+    for (let i = 0; i < sortLength; i++) {
+      unsorted[i] = pixelColors[x + i];
+    }
+
+    unsorted.sort((a, b) => brightness(a) - brightness(b));
+
+    for (let i = 0; i < sortLength; i++) {
+      let pix = unsorted[i];
+      let idx = (x + i + y * width) * 4;
+      pixels[idx] = red(pix);
+      pixels[idx + 1] = green(pix);
+      pixels[idx + 2] = blue(pix);
+      pixels[idx + 3] = alpha(pix);
+    }
+
+    x = xEnd + 1;
+  }
+}
+
+function pixelSort() {
+  let rowStep = 1;
+  for (let row = 0; row < height; row += rowStep) {
+    console.log("Processing row " + row);
+    let startIndex = row * width * 4;
+    let endIndex = (row + 1) * width * 4;
+    let pixelColors = [];
+    for (let i = startIndex; i < endIndex; i += 4) {
+      let pix = color(pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]);
+      pixelColors.push(pix);
+    }
+    sortRow(pixelColors, row);
+  }
+}
+
 function draw() {
   image(img, 0, 0, width, height);
   loadPixels();
+  pixelSort();
   iterate(matrixErrorDiffusion);
   updatePixels();
 }
