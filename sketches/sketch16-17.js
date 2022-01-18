@@ -73,8 +73,7 @@ function draw() {
     console.log(rotation);
     let rotationStep = random(0.1, 0.3);
     rotate(rotationStep);
-    stroke(Math.random() > 0.5 ? 20 : 240, random(64, 255));
-    //strokeWeight(random(1, 3));
+    stroke(Math.random() > 0.5 ? 20 : 240, random(64, 255));    
     let lineWidth = random(20);
     for (let i = -lineWidth; i <= lineWidth; i++) {
       line(0, 0, lineLength, i);
