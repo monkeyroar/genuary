@@ -9,7 +9,7 @@ function setup() {
 }
 
 function preload() {
-  img = loadImage("../assets/sketch2.jpg");
+  img = loadImage("../assets/sketch2/pic.jpg");
 }
 
 function iterate(callback) {
