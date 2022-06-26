@@ -1,4 +1,4 @@
-let primaryFont, secondaryFont;
+let primaryFont, secondaryFonts;
 let textGraphics;
 let strings;
 
@@ -12,6 +12,7 @@ function setup() {
   noLoop();
   background(255);
 
+  secondaryFonts = ["Verdana", "Courier New", "Georgia"];
   textGraphics = createGraphics(width, height);
   strings = strings
     .map((s) => s.toLowerCase())
@@ -25,9 +26,10 @@ function isPixelBlack(x, y) {
 }
 
 const rects = [];
+let rectsSq;
 const minDim = 2;
 const maxDim = 100;
-const totalRects = 3000;
+const totalRects = 5000;
 const createRectAttempts = 500;
 
 function createRect() {
@@ -38,7 +40,7 @@ function createRect() {
       x: Math.round(Math.random() * width),
       y: Math.round(Math.random() * height),
       dim: minDim,
-      ratio: random(0.5, 0.75),
+      ratio: random(0.25, 0.75),
     };
 
     if (doesRectHaveACollision(newRect)) {
@@ -100,17 +102,26 @@ function doesRectHaveACollision(newRect) {
   return false;
 }
 
-function drawRect(r) {
+function drawRect(r, i) {
   translate(r.x + r.width / 2, r.y + r.height / 2);
   scale(random(0.8, 1.2), random(0.8, 1.2));
   rotate(random(-PI / 6, PI / 6));
-  fill(240, 200);
+
+  colorMode(HSB);
+  let n = noise(r.x, r.y);
+  let offset = map(n, 0, 1, -20, 20);
+  let sat = map(r.y, 0, height, 80, 60);
+  let bri = 50 + offset;
+  let alpha = map(rectsSq[i], 0, 1, 0.75, 1);
+  fill(0, sat, bri, alpha);
+
+  textFont(secondaryFonts[Math.floor(Math.random() * secondaryFonts.length)]);
   let size = textSize();
   let str = strings[Math.floor(Math.random() * strings.length)];
   let minSizeW = (size / textWidth(str)) * r.width;
   let minSizeH = (size / (textDescent() + textAscent())) * r.height;
   textSize(min(minSizeW, minSizeH));
-  let scaleFactor = (r.height / (textAscent() + textDescent())) * 1.5;
+  let scaleFactor = (r.height / (textAscent() + textDescent())) * 2;
   scale(1, scaleFactor);
   text(str, 0, 0);
 }
@@ -126,6 +137,7 @@ function drawTextToGraphics() {
 
 function drawBackground() {
   push();
+  strokeWeight(2);
   let from = color(0, 87, 184);
   let to = color(255, 215, 0);
   for (let i = 0; i < height; i++) {
@@ -139,13 +151,12 @@ function drawBackground() {
 function drawText() {
   textFont(primaryFont);
   textAlign(CENTER, CENTER);
-  textSize(300);
   fill(0, 0);
-  let numSteps = 20;
+  let numSteps = 5;
   translate(width / 2, height / 2);
   for (let i = 0; i < numSteps; i++) {
-    let alpha = map(i, 0, 10, 255, 0);
-    scale(0.9, 0.9);
+    let alpha = map(i, 0, numSteps, 255, 0);
+    textSize(300 - i * 20);
     stroke(0, alpha);
     text("ХТО", 8, -height * 0.2);
     text("Я?", 0, height * 0.2);
@@ -157,20 +168,21 @@ function draw() {
   image(textGraphics, 0, 0);
   loadPixels();
   clear();
-  //background(240);
 
   drawBackground();
 
   for (let i = 0; i < totalRects; i++) {
     createRect();
   }
+  console.log(rects.length);
+  rectsSq = rects.map((r) => r.width * r.height);
+  let maxSq = Math.max.apply(Math, rectsSq);
+  rectsSq = rectsSq.map((sq) => sq / maxSq);
 
   textAlign(CENTER, CENTER);
-  //textFont(secondaryFont);
-  textStyle(BOLD);
   for (let i = 0; i < rects.length; i++) {
     push();
-    drawRect(rects[i]);
+    drawRect(rects[i], i);
     pop();
   }
 
