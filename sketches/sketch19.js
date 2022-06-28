@@ -11,6 +11,7 @@ function setup() {
   createCanvas(1080, 1080);
   noLoop();
   background(255);
+  angleMode(DEGREES);
 
   secondaryFonts = ["Verdana", "Courier New", "Georgia"];
   textGraphics = createGraphics(width, height);
@@ -27,9 +28,9 @@ function isPixelBlack(x, y) {
 
 const rects = [];
 let rectsSq;
-const minDim = 2;
+const minDim = 1;
 const maxDim = 100;
-const totalRects = 5000;
+const totalRects = 10000;
 const createRectAttempts = 500;
 
 function createRect() {
@@ -104,15 +105,13 @@ function doesRectHaveACollision(newRect) {
 
 function drawRect(r, i) {
   translate(r.x + r.width / 2, r.y + r.height / 2);
-  scale(random(0.8, 1.2), random(0.8, 1.2));
-  rotate(random(-PI / 6, PI / 6));
+  rotate(random(-10, 10));
 
   colorMode(HSB);
-  let n = noise(r.x, r.y);
-  let offset = map(n, 0, 1, -20, 20);
-  let sat = map(r.y, 0, height, 80, 60);
-  let bri = 50 + offset;
-  let alpha = map(rectsSq[i], 0, 1, 0.75, 1);
+  let offset = Math.abs(r.y - height / 2);
+  let sat = map(offset, 0, height / 2, 0, 100);
+  let bri = map(offset, 0, height / 2, 0, 50);
+  let alpha = map(rectsSq[i], 0, 1, 1, 0.75);
   fill(0, sat, bri, alpha);
 
   textFont(secondaryFonts[Math.floor(Math.random() * secondaryFonts.length)]);
@@ -121,8 +120,14 @@ function drawRect(r, i) {
   let minSizeW = (size / textWidth(str)) * r.width;
   let minSizeH = (size / (textDescent() + textAscent())) * r.height;
   textSize(min(minSizeW, minSizeH));
-  let scaleFactor = (r.height / (textAscent() + textDescent())) * 2;
-  scale(1, scaleFactor);
+  let scaleFactor = r.height / textSize();
+  let scaleConst = 1.1;
+  scale(scaleConst, scaleFactor * scaleConst);
+
+  let rand = Math.random();
+  if (rand > 0.75) textStyle(BOLD);
+  else if (rand > 0.5) textStyle(ITALIC);
+  else if (rand > 0.25) textStyle(BOLDITALIC);
   text(str, 0, 0);
 }
 
@@ -131,7 +136,7 @@ function drawTextToGraphics() {
   textGraphics.textSize(300);
   textGraphics.textAlign(CENTER, CENTER);
   textGraphics.fill(0);
-  textGraphics.text("ХТО", width / 2 + 8, height * 0.3);
+  textGraphics.text("ХТО", width / 2, height * 0.3);
   textGraphics.text("Я?", width / 2, height * 0.7);
 }
 
@@ -158,7 +163,7 @@ function drawText() {
     let alpha = map(i, 0, numSteps, 255, 0);
     textSize(300 - i * 20);
     stroke(0, alpha);
-    text("ХТО", 8, -height * 0.2);
+    text("ХТО", 0, -height * 0.2);
     text("Я?", 0, height * 0.2);
   }
 }
