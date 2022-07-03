@@ -107,13 +107,6 @@ function drawRect(r, i) {
   translate(r.x + r.width / 2, r.y + r.height / 2);
   rotate(random(-10, 10));
 
-  colorMode(HSB);
-  let offset = Math.abs(r.y - height / 2);
-  let sat = map(offset, 0, height / 2, 0, 100);
-  let bri = map(offset, 0, height / 2, 0, 50);
-  let alpha = map(rectsSq[i], 0, 1, 1, 0.75);
-  fill(0, sat, bri, alpha);
-
   textFont(secondaryFonts[Math.floor(Math.random() * secondaryFonts.length)]);
   let size = textSize();
   let str = strings[Math.floor(Math.random() * strings.length)];
@@ -128,6 +121,18 @@ function drawRect(r, i) {
   if (rand > 0.75) textStyle(BOLD);
   else if (rand > 0.5) textStyle(ITALIC);
   else if (rand > 0.25) textStyle(BOLDITALIC);
+
+  fill(0);
+  text(str, 0.5, 0.5);
+
+  colorMode(HSB);
+  let offset = Math.abs(r.y - height / 2);
+  let n = noise(r.x, r.y);
+  let sat = map(offset, 0, height / 2, 60, 80);
+  let bri = map(n, 0, 1, 50, 100);
+  let alpha = map(rectsSq[i], 0, 1, 1, 0.75);
+  fill(0, sat, bri, alpha);
+
   text(str, 0, 0);
 }
 
